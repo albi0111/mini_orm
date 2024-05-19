@@ -10,9 +10,53 @@ class MiniRecord
     end
   end
 
+  # mini version of has_many
+  # def self.has_many(name)
+  #   define_method(name) do
+  #     Object.const_get(name.to_s.singularize.capitalize).where("#{self.class.name.downcase}_id" => id)
+  #   end
+  # end
+
+  # new version of has_may
+
   def self.has_many(name)
+    singular_name = name.to_s.singularize
+
+    define_method("#{name}_class") do
+      Object.const_get(singular_name.capitalize)
+    end
+
     define_method(name) do
-      Object.const_get(name.to_s.singularize.capitalize).where("#{self.class.name.downcase}_id" => id)
+
+      proxy_class = Class.new do
+        define_method(:initialize) do |owner|
+          @owner = owner
+        end
+
+        define_method(:where) do |conditions|
+          owner_id_field = "#{@owner.class.name.downcase}_id"
+          Object.const_get(singular_name.capitalize).where(conditions.merge(owner_id_field => @owner.id))
+        end
+
+        define_method(:create) do |attributes|
+          clss = Object.const_get(singular_name.capitalize)
+          attributes["#{@owner.class.name.downcase}_id".to_sym] = @owner.id
+          clss.create(attributes)
+        end
+
+        define_method(:new) do |attributes=nil|
+          attributes ||= {}
+          clss = Object.const_get(singular_name.capitalize)
+          attributes["#{@owner.class.name.downcase}_id".to_sym] = @owner.id
+          clss.new(attributes)
+        end
+
+        define_method(:all) do
+          Object.const_get(singular_name.capitalize).where("#{@owner.class.name.downcase}_id" => @owner.id)
+        end
+      end
+
+      proxy_class.new(self)
     end
   end
 
