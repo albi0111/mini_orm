@@ -25,18 +25,9 @@ class MiniRecord
   end
 
   def self.create(attributes)
-    return nil unless File.exist?(self.class.csv_file_path)
-    data = CSV.table(self.class.csv_file_path)
-    @id = data.any? ? data.max_by { |row| row[:id] }[:id] + 1 : 1
-    record = []
-    attributes.each do |col, val|
-      if self.class.columns.keys.include?(col)
-        record[col] = val
-      end
-    end
-    data << [@id, record]
-    File.open(self.class.csv_file_path, "w") { |f| f.write(data.to_csv) }
-    self.class.find(@id)
+    return if attributes.nil? || !attributes.is_a?(Hash)
+    instance = new(attributes)
+    instance.save
   end
 
   def self.drop_table

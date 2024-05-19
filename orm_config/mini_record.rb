@@ -1,6 +1,14 @@
 require 'csv'
 
 class MiniRecord
+  def initialize(attr = nil)
+    return if attr.nil? || !attr.is_a?(Hash)
+    attr.each do |col, val|
+      send("#{col}=", val) if self.class.columns.keys.include?(col)
+    end
+    self
+  end
+
   def save
     self.class.run_callbacks(:before_save, self)
     self.class.create_table unless File.exist?(self.class.csv_file_path)

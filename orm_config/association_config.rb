@@ -16,6 +16,10 @@ class MiniRecord
     end
   end
 
+  def self.has_one(name)
+
+  end
+
   def self.where(conditions)
     return [] unless File.exist?(csv_file_path)
     rows = CSV.read(csv_file_path, headers: true).select do |row|
