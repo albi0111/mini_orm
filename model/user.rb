@@ -3,6 +3,8 @@ class User < MiniRecord
   column :email, 'TEXT'
   has_many :posts
 
+  attr_reader :id
+
   before_save :test_before_save
   after_save :test_after_save
 

@@ -1,17 +1,14 @@
 require_relative 'config/env'
 
 
-# User.create_table
+last_user = User.last
 
-# user = User.new
-# user.name = "John Doe test cb"
-# user.email = "john@example.com"
-# user.save
+post = Post.new
+post.title = "Mini Orm"
+post.content = "Orm With CSV"
+post.user = last_user
+post.save
 
-# puts User.all.map(&:name)
-
-john1 = User.first
-john1.update(name: 'john_updating_21', email: "john@example.com" )
-puts john1.name
-john1.delete
-puts User.all.map(&:name)
+user = post.user
+# print user.inspect
+print user.posts
