@@ -12,6 +12,12 @@ class MiniRecord
     @columns[name] = type
 
     attr_accessor name
+
+    define_singleton_method("find_by_#{name}") do |value|
+      return unless value.is_a?(Integer) || value.is_a?(String) || name.blank?
+
+      find(name.to_sym => value)
+    end
   end
 
   def self.columns
@@ -36,27 +42,24 @@ class MiniRecord
 
   def self.all
     return [] unless File.exist?(csv_file_path)
-    CSV.read(csv_file_path, headers: true).map do |row|
-      instance = new
-      row.each do |col, val|
-        instance.send("#{col}=", val) if columns.keys.map(&:to_s).include?(col)
-      end
-      instance.instance_variable_set("@id", row["id"].to_i)
-      instance
+    CSV.read(csv_file_path, headers: true).map { |row| new(row.to_h) }
+  end
+
+
+  def self.where(conditions)
+    return [] unless File.exist?(csv_file_path)
+    rows = CSV.read(csv_file_path, headers: true).select do |row|
+      conditions.all? { |col, val| row[col.to_s] == val.to_s }
+    end
+    rows.map do |row|
+      new(row.to_h)
     end
   end
 
-  def self.find(id)
+  def self.find(conditions)
     return nil unless File.exist?(csv_file_path)
-    row = CSV.read(csv_file_path, headers: true).find { |row| row["id"].to_i == id }
-    return nil unless row
-
-    instance = new
-    row.each do |col, val|
-      instance.send("#{col}=", val) if columns.keys.map(&:to_s).include?(col)
-    end
-    instance.instance_variable_set("@id", row["id"].to_i)
-    instance
+    conditions = {"id": conditions } if conditions.is_a?(Integer)
+    where(conditions).first
   end
 
   def self.first
@@ -64,12 +67,7 @@ class MiniRecord
     row = CSV.read(csv_file_path, headers: true).min_by { |row| row[:id] }
     return nil unless row
 
-    instance = new
-    row.each do |col, val|
-      instance.send("#{col}=", val) if columns.keys.map(&:to_s).include?(col)
-    end
-    instance.instance_variable_set("@id", row["id"].to_i)
-    instance
+    new(row.to_h)
   end
 
   def self.last
@@ -77,11 +75,6 @@ class MiniRecord
     row = CSV.read(csv_file_path, headers: true).max_by { |row| row[:id] }
     return nil unless row
 
-    instance = new
-    row.each do |col, val|
-      instance.send("#{col}=", val) if columns.keys.map(&:to_s).include?(col)
-    end
-    instance.instance_variable_set("@id", row["id"].to_i)
-    instance
+    new(row.to_h)
   end
 end

@@ -1,6 +1,6 @@
 class User < MiniRecord
-  column :name, 'TEXT'
-  column :email, 'TEXT'
+  column :name, String.new
+  column :email, String.new
   has_many :posts
 
   attr_reader :id
