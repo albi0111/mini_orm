@@ -152,7 +152,52 @@ post.content = "Orm With CSV"
 post.user = last_user
 post.save
 ```
+## Try To Understand this Diagramatically
 
+Lets create a detailed flowchart showing exactly how the User.create method executes, from the initial call to final save.
+
+```ruby
+User.create(name: "John Deo", email:"john@example.com")
+```
+
+```mermaid
+flowchart TD
+    A[User.create called] -->|with params| B["{ name: 'John Doe', email: 'john@example.com' }"]
+    
+    subgraph CreateMethod["self.create method"]
+        B -->|validates| C{Is Hash?}
+        C -->|no| D[Return nil]
+        C -->|yes| E[Call User.new]
+    end
+    
+    subgraph InitializeProcess["Initialize Process"]
+        E -->|passes attributes| F[Initialize method]
+        F -->|iterates attributes| G[Process each attribute]
+        G -->|for each attr| H{Is column defined?}
+        H -->|yes| I[Call setter method]
+        H -->|no| J[Skip attribute]
+        I -->|using send| K["name=('John Doe')"]
+        I -->|using send| L["email=('john@example.com')"]
+    end
+    
+    subgraph SaveProcess["Save Process"]
+        M[Call save method] -->|first| N[Run before_save callbacks]
+        N -->|then| O{CSV file exists?}
+        O -->|no| P[Create CSV file]
+        O -->|yes| Q[Read existing CSV]
+        
+        Q --> R{Has existing ID?}
+        R -->|no| S[Generate new ID]
+        S -->|then| T[Prepare new row]
+        T -->|format| U["[id, name, email]"]
+        
+        U -->|write| V[Append to CSV]
+        V -->|then| W[Run after_save callbacks]
+        W -->|finally| X[Return User instance]
+    end
+    
+    InitializeProcess -->|new instance| M
+```
 ## Understanding Ruby Metaprogramming: Common Questions
 
 After building this Mini ORM, several interesting questions arise about how Ruby's metaprogramming features work under the hood. Let's explore some of these fundamental concepts.
