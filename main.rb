@@ -12,7 +12,6 @@ post.content = "Orm With CSV"
 post.user = last_user
 post.save
 
-p post.title
 
 post = Post.new
 post.title = "Mini Orm 1"
@@ -20,15 +19,10 @@ post.content = "Orm With CSV 1"
 post.user = last_user
 post.save
 
-# user = post.user
+p post
 
-# post2 = user.posts.new
-# post2.title = "advance association"
-# post2.content = "checking advance assoiation new and save methods"
-# post2.save
+user = post.user
 
-# # puts Post.all.inspect
+user.create_post(title: "advance association", content: "checking advance assoiation create method")
 
-# user.posts.create(title: "advance association 1", content: "checking advance assoiation create method")
-# p post
-# p Post.find_by_id(1)
+p Post.find_by_title("advance association")
