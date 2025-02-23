@@ -4,12 +4,15 @@ Post.drop_table
 Post.create_table
 
 last_user = User.last
+p last_user.name
 
 post = Post.new
 post.title = "Mini Orm"
 post.content = "Orm With CSV"
 post.user = last_user
 post.save
+
+p post.title
 
 post = Post.new
 post.title = "Mini Orm 1"
@@ -28,4 +31,4 @@ post.save
 
 # user.posts.create(title: "advance association 1", content: "checking advance assoiation create method")
 # p post
-p Post.find_by_id(1)
+# p Post.find_by_id(1)
