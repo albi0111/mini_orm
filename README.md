@@ -152,7 +152,7 @@ post.content = "Orm With CSV"
 post.user = last_user
 post.save
 ```
-## Try To Understand this Diagramatically
+## Breaking It Down Visually
 
 Lets create a detailed flowchart showing exactly how the User.create method executes, from the initial call to final save.
 
