@@ -4,8 +4,10 @@ class MiniRecord
   def initialize(attr = nil)
     return if attr.nil? || !attr.is_a?(Hash)
     attr.each do |col, val|
-      val = val.to_i if col.end_with?("id")
-      send("#{col}=", val) if self.class.columns.keys.map(&:to_s).include?(col)
+      col = col.to_sym
+      val = val.to_i if col.to_s.end_with?("id")
+
+      send("#{col}=", val) if self.class.columns.key?(col)
     end
     instance_variable_set("@id", attr["id"].to_i) if attr["id"]
     self
