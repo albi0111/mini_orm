@@ -177,7 +177,7 @@ flowchart TD
         H -->|yes| I[Call setter method]
         H -->|no| J[Skip attribute]
         I -->|using send| K["name=('John Doe')"]
-        I -->|using send| L["email=('john@example.com')"]
+        I -->|using send| L["email=('john@example')"]
     end
     
     subgraph SaveProcess["Save Process"]
