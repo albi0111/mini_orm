@@ -1,4 +1,4 @@
-# Building a Mini ORM: Exploring Ruby Metaprogramming Magic
+# Building a Mini ORM with Ruby Metaprogramming: A Deep Dive into Active Record Pattern
 
 Object-Relational Mapping (ORM) frameworks like ActiveRecord are fundamental to modern web development, but have you ever wondered how they work under the hood? In this post, I'll walk you through building a minimal ORM using Ruby's powerful metaprogramming features. We'll create a system that handles basic database operations, associations, and even callbacks - all while storing data in CSV files for simplicity.
 
